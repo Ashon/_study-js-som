@@ -1,10 +1,10 @@
 
-(function(window){
+(function(window) {
 
-    'use strict'
+    'use strict';
 
     // som namespace
-    window.som = function som(unitSize, weightLength) {
+    window.Som = function Som(unitSize, weightLength) {
         this.units = [];
         this.trainSet = [];
         this.threshold = 0.05;
@@ -18,8 +18,8 @@
 
         this.initialize = function(unitSize, weightLength) {
             for(var i = 0; i < unitSize; i++)
-                this.units.push(new som.unit(weightLength));
-        }
+                this.units.push(new Som.Unit(weightLength));
+        };
 
         // get best matching unit
         this.getBMU = function(target) {
@@ -39,7 +39,7 @@
 
             } else
                 return undefined;
-        }
+        };
 
         this.train = function() {
             // console.log('train iteration start');
@@ -54,7 +54,7 @@
                 units.forEach(function(unit) {
                     // console.log(unit);
                     if(bmu != unit) {
-                        var squaredError = unit.getSquaredError(bmu)
+                        var squaredError = unit.getSquaredError(bmu);
                         var activate = som.learningRate * Math.exp(-squaredError / (range * range));
                         // console.debug({
                         //     'unit-weight' : unit.weight,
@@ -81,10 +81,10 @@
                 // units.forEach(function(unit) {
                 //     console.log('tr='+unit.weight[0]);
                 // });
-            }
+            };
 
             var trainTimer = setInterval(function() {
-                if(counter == 0) {
+                if(counter === 0) {
                     clearInterval(trainTimer);
                     // console.log('train finished');
                 } else {
@@ -98,23 +98,23 @@
             // this.units.forEach(function(unit) {
             //     console.log(unit.weight);
             // });
-        }
+        };
 
         this.initialize(unitSize, weightLength);
-    }
+    };
 
     // som unit class
-    window.som.unit = function somUnit(weightLength) {
+    window.Som.Unit = function SomUnit(weightLength) {
         this.weight = [];
 
         this.initialize = function(weightLength) {
             for(var i = 0; i < weightLength; i++)
                 this.weight.push(Math.random());
-        }
+        };
 
         this.getSquaredError = function(target) {
             // type check
-            if(som.unit.prototype.isPrototypeOf(target)) {
+            if(Som.Unit.prototype.isPrototypeOf(target)) {
                 // console.log(this.weight.length);
                 // console.log(target.weight.length);
                 if(this.weight.length == target.weight.length) {
@@ -133,23 +133,23 @@
                 } else {
                     // console.log('not equal');
                     // console.log(this.weight);
-                    throw 'Unit\'s weight dimension is not equal'
+                    throw 'Unit\'s weight dimension is not equal';
                 }
             } else {
                 // console.log('not unit');
-                throw 'Param\'s type is not som.unit'
+                throw 'Param\'s type is not som.unit';
             }
-        }
+        };
 
         this.addWeight = function(idx, value) {
             this.weight[idx] += value;
-        }
+        };
 
         this.initialize(weightLength);
-    }
+    };
 
     // register to window singleton instance
-    window.som.prototype = new som();
-    window.som.unit.prototype = new som.unit();
+    window.Som.prototype = new Som();
+    window.Som.Unit.prototype = new Som.Unit();
 
 })(window);
