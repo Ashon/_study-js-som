@@ -54,13 +54,14 @@
                 units.forEach(function(unit) {
                     // console.log(unit);
                     if(bmu != unit) {
-                        var activate = som.learningRate * Math.exp(-unit.getSquaredError(bmu) / (range * range));
+                        var squaredError = unit.getSquaredError(bmu)
+                        var activate = som.learningRate * Math.exp(-squaredError / (range * range));
                         // console.debug({
                         //     'unit-weight' : unit.weight,
                         //     'bmu-weight' : bmu.weight,
                         //     'learning-rate' : som.learningRate,
-                        //     'squared-error' : unit.getSquaredError(bmu),
-                        //     'exponential-value' : Math.exp(-unit.getSquaredError(bmu) / (som.range * som.range)),
+                        //     'squared-error' : squaredError,
+                        //     'exponential-value' : Math.exp(-squaredError / (range * range)),
                         //     'activate' : activate
                         // });
                         if(activate >= som.threshold * som.learningRate) {
@@ -72,7 +73,7 @@
                                 //     'bmu-weight-value' : value,
                                 //     'activate' : activate
                                 // });
-                                unit.addValue(vidx, bonusWeight);
+                                unit.addWeight(vidx, bonusWeight);
                             });
                         }
                     }
@@ -103,7 +104,7 @@
     }
 
     // som unit class
-    window.som.unit = function unit(weightLength) {
+    window.som.unit = function somUnit(weightLength) {
         this.weight = [];
 
         this.initialize = function(weightLength) {
@@ -140,7 +141,7 @@
             }
         }
 
-        this.addValue = function(idx, value) {
+        this.addWeight = function(idx, value) {
             this.weight[idx] += value;
         }
 
