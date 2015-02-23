@@ -46,9 +46,25 @@ Som.prototype = {
     } else
       return undefined;
   },
-  train: function() {
+  train: function(trainOption) {
+
     // console.log('train iteration start');
     var som = this;
+
+    // load train option
+    if(typeof(trainOption) == 'object') {
+      if('threshold' in trainOption)
+        som.threshold = trainOption.threshold;
+      if('learningRate' in trainOption)
+        som.learningRate = trainOption.learningRate;
+      if('range' in trainOption)
+        som.range = trainOption.range;
+      if('iteration' in trainOption)
+        som.iteration = trainOption.iteration;
+      if('trainInterval' in trainOption)
+        som.trainInterval = trainOption.trainInterval;
+    }
+
     var units = som.units;
 
     var counter = som.iteration;
@@ -62,7 +78,7 @@ Som.prototype = {
         if (bmu != unit) {
           var squaredError = unit.getSquaredError(bmu);
           var activate = som.learningRate * Math.exp(-squaredError / (range * range));
-          // console.debug({
+          // console.info({
           //     'unit-weight' : unit.weight,
           //     'bmu-weight' : bmu.weight,
           //     'learning-rate' : som.learningRate,
@@ -74,7 +90,7 @@ Som.prototype = {
             unit.weight.forEach(function(value, vidx) {
               // adjust unit's each weight value
               var bonusWeight = (bmu.weight[vidx] - value) * activate * som.learningRate;
-              // console.debug({
+              // console.info({
               //     'weight-value' : value,
               //     'bmu-weight-value' : value,
               //     'activate' : activate
@@ -96,10 +112,11 @@ Som.prototype = {
       } else {
         som.trainSet.forEach(trainSample);
         counter--;
-        // console.log('iteration ' + (som.iteration - counter));
+        console.log('iteration ' + (som.iteration - counter));
       }
     }, som.trainInterval);
 
+    return trainTimer;
     // console.log('train complete');
     // this.units.forEach(function(unit) {
     //     console.log(unit.weight);
@@ -125,7 +142,7 @@ Som.Unit.prototype = {
         this.weight.forEach(function(value, idx) {
           // get euclidean squared error
           var delta = value - target.weight[idx];
-          // console.debug({
+          // console.info({
           //     'this-value' : value,
           //     'target-weight' : target.weight[idx],
           //     'error-delta' : delta
@@ -147,3 +164,7 @@ Som.Unit.prototype = {
     this.weight[idx] += value;
   }
 };
+
+// export module
+module.exports = Som;
+module.exports.Unit = Som.Unit;
